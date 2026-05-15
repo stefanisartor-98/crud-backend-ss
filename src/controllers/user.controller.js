@@ -3,7 +3,7 @@ import {
     createUserService,
     updateUserService,
     deleteUserService
-} from '../service/user.service.js'
+} from '../services/user.service.js'
 
 const getUsers = async (req, res) => {
     try{
@@ -33,7 +33,7 @@ const updateUser = async (req, res) => {
     try {
         console.log('CONTROLLER -> updateUser')
         const user = await createUserService(
-            req.params.id
+            req.params.id,
             req.body
         )
         res.json(user)
@@ -57,7 +57,7 @@ const deleteUser = async (req, res) => {
 }
 
 export {
-    
+
     getUsers,
     createUser,
     updateUser,

@@ -1,4 +1,3 @@
-import { deleteUser } from "../controllers/user.controller"
 
 const getUsersService = async () => {
     try {
