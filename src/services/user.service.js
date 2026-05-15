@@ -1,4 +1,6 @@
-const getUsersService = async () -> {
+import { deleteUser } from "../controllers/user.controller"
+
+const getUsersService = async () => {
     try {
         console.log('SERVICE -> getUserService')
 
@@ -32,4 +34,24 @@ const updateUserService = async (id, data) => {
     } catch (error) {
         throw error
     }
+}
+
+const deleteUserService = async (id) => {
+    try {
+        console.log('SERVICE -> deleteUserService')
+        console.log(id)
+        
+        return {
+            message: 'Usuario eliminado'
+        }
+    } catch (error) {
+        throw error
+    }
+}
+
+export { 
+    getUsersService,
+    createUserService,
+    updateUserService,
+    deleteUserService
 }
