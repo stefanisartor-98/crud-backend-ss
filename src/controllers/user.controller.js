@@ -1,29 +1,17 @@
-import {
-    createUserSchema,
-    updateUserSchema,
-    userParamsSchema
-} from '../dto/user.dto.js'
+import { createUserSchema, updateUserSchema, userParamsSchema } from '../dto/user.dto.js'
 
+import { getUsersService, createUserService, updateUserService, deleteUserService } from '../services/user.service.js'
 
-import {
-    getUsersService,
-    createUserService,
-    updateUserService,
-    deleteUserService
-} from '../services/user.service.js'
-
-import {
-    successResponse,
-    errorResponse,
-} from "../helpers/response.helper.js"
+import { successResponse, errorResponse, forbiddenResponse } from "../helpers/response.helper.js"
 
 const getUsers = async (req, res) => {
     try{
         const { email, id} = req.query;
-
         const users = await getUsersService({
             email,
             id,
+            requesterRole: req.user?.role,
+            requesterId: req.user?.userId,
         });
 
         return successResponse(
@@ -32,6 +20,10 @@ const getUsers = async (req, res) => {
             "Usuarios obtenidos correctamente"
         );
     } catch (error) {
+        if (error.statusCode === 403) {
+            return forbiddenResponse(res, error.message || "Acceso denegado", error.errors || null);
+        }
+
         return errorResponse(
             res,
             error.message || "Error interno del servidor",
@@ -56,7 +48,7 @@ const createUser = async (req, res) => {
         }
 
         const user = await createUserService(req.body);
-
+        // console.log(req.body)
         return successResponse(
             res,
             user,
@@ -94,7 +86,7 @@ const updateUser = async (req, res) => {
                 res,
                 "Error de validación",
                 400,
-                errir.details
+                error.details
             );
         }
         
@@ -105,7 +97,7 @@ const updateUser = async (req, res) => {
         return successResponse(
             res,
             user,
-            "Usuario actuaizado correctamente"
+            "Usuario actualizado correctamente"
         );
     } catch (error) {
         return errorResponse(
@@ -131,7 +123,7 @@ const deleteUser = async (req, res) => {
             );
         }
 
-        const result = await deleteUserService(req.params.id);
+        const result = await deleteUserService(req.params.id, req.user);
         return successResponse(
             res,
             result,
@@ -147,10 +139,4 @@ const deleteUser = async (req, res) => {
     }
 };
 
-export {
-
-    getUsers,
-    createUser,
-    updateUser,
-    deleteUser
-}
+export { getUsers, createUser, updateUser, deleteUser };
